@@ -6,11 +6,15 @@ import { format, parseISO, differenceInHours, differenceInMinutes } from 'date-f
 
 const SleepTracker = () => {
   const location = useLocation();
+  const todayStr = new Date().toISOString().slice(0, 10);
   const [entries, setEntries] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
+    sleepDate: todayStr,
     sleepTime: '',
     wakeTime: '',
+    sleepMeridiem: 'PM',
+    wakeMeridiem: 'AM',
     quality: 3,
     interruptions: 0,
     note: ''
@@ -42,11 +46,44 @@ const SleepTracker = () => {
     setLoading(true);
 
     try {
-      await addSleepEntry(formData);
+      const [sh, sm] = (formData.sleepTime || '').split(':').map(Number);
+      const [wh, wm] = (formData.wakeTime || '').split(':').map(Number);
+      const base = new Date(formData.sleepDate || todayStr);
+      const sleepDT = new Date(base);
+      // convert to 24h using meridiem
+      const sh24 = (() => {
+        if (isNaN(sh)) return 0;
+        if (formData.sleepMeridiem === 'AM') return sh === 12 ? 0 : sh;
+        return sh === 12 ? 12 : sh + 12;
+      })();
+      sleepDT.setHours(sh24, isNaN(sm) ? 0 : sm, 0, 0);
+      const wakeDT = new Date(base);
+      const wh24 = (() => {
+        if (isNaN(wh)) return 0;
+        if (formData.wakeMeridiem === 'AM') return wh === 12 ? 0 : wh;
+        return wh === 12 ? 12 : wh + 12;
+      })();
+      wakeDT.setHours(wh24, isNaN(wm) ? 0 : wm, 0, 0);
+      if (wakeDT <= sleepDT) {
+        wakeDT.setDate(wakeDT.getDate() + 1);
+      }
+
+      const payload = {
+        sleepTime: sleepDT.toISOString(),
+        wakeTime: wakeDT.toISOString(),
+        quality: formData.quality,
+        interruptions: formData.interruptions,
+        note: formData.note
+      };
+
+      await addSleepEntry(payload);
       setShowForm(false);
       setFormData({
+        sleepDate: todayStr,
         sleepTime: '',
         wakeTime: '',
+        sleepMeridiem: 'PM',
+        wakeMeridiem: 'AM',
         quality: 3,
         interruptions: 0,
         note: ''
@@ -59,20 +96,22 @@ const SleepTracker = () => {
     }
   };
 
-  const calculateSleepDuration = (sleepTime, wakeTime) => {
+  const calculateSleepDuration = (sleepTime, wakeTime, dateStr, sleepMeridiem, wakeMeridiem) => {
     if (!sleepTime || !wakeTime) return null;
-    
-    const sleep = new Date(sleepTime);
-    const wake = new Date(wakeTime);
-    
-    // Handle overnight sleep (if wake time is next day)
+    const base = dateStr || todayStr;
+    const [sh, sm] = sleepTime.split(':').map(Number);
+    const [wh, wm] = wakeTime.split(':').map(Number);
+    const sh24 = sleepMeridiem === 'AM' ? (sh === 12 ? 0 : sh) : (sh === 12 ? 12 : sh + 12);
+    const wh24 = wakeMeridiem === 'AM' ? (wh === 12 ? 0 : wh) : (wh === 12 ? 12 : wh + 12);
+    const sleep = new Date(`${base}T00:00:00`);
+    sleep.setHours(isNaN(sh24) ? 0 : sh24, isNaN(sm) ? 0 : sm, 0, 0);
+    const wake = new Date(`${base}T00:00:00`);
+    wake.setHours(isNaN(wh24) ? 0 : wh24, isNaN(wm) ? 0 : wm, 0, 0);
     if (wake < sleep) {
       wake.setDate(wake.getDate() + 1);
     }
-    
     const hours = differenceInHours(wake, sleep);
     const minutes = differenceInMinutes(wake, sleep) % 60;
-    
     return { hours, minutes };
   };
 
@@ -114,30 +153,62 @@ const SleepTracker = () => {
       {showForm && (
         <div className="bg-white rounded-lg shadow-md p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Sleep Time
+                  Date
                 </label>
                 <input
-                  type="datetime-local"
-                  value={formData.sleepTime}
-                  onChange={(e) => setFormData({ ...formData, sleepTime: e.target.value })}
+                  type="date"
+                  value={formData.sleepDate}
+                  onChange={(e) => setFormData({ ...formData, sleepDate: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sleep Time
+                </label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="time"
+                    value={formData.sleepTime}
+                    onChange={(e) => setFormData({ ...formData, sleepTime: e.target.value })}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                  <select
+                    value={formData.sleepMeridiem}
+                    onChange={(e) => setFormData({ ...formData, sleepMeridiem: e.target.value })}
+                    className="h-10 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Wake Time
                 </label>
-                <input
-                  type="datetime-local"
-                  value={formData.wakeTime}
-                  onChange={(e) => setFormData({ ...formData, wakeTime: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="time"
+                    value={formData.wakeTime}
+                    onChange={(e) => setFormData({ ...formData, wakeTime: e.target.value })}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                  <select
+                    value={formData.wakeMeridiem}
+                    onChange={(e) => setFormData({ ...formData, wakeMeridiem: e.target.value })}
+                    className="h-10 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -145,8 +216,8 @@ const SleepTracker = () => {
               <div className="bg-blue-50 p-4 rounded-lg">
                 <p className="text-sm font-medium text-blue-800">
                   <Clock className="inline h-4 w-4 mr-1" />
-                  Sleep Duration: {calculateSleepDuration(formData.sleepTime, formData.wakeTime)?.hours}h 
-                  {calculateSleepDuration(formData.sleepTime, formData.wakeTime)?.minutes}m
+                  Sleep Duration: {calculateSleepDuration(formData.sleepTime, formData.wakeTime, formData.sleepDate, formData.sleepMeridiem, formData.wakeMeridiem)?.hours}h 
+                  {calculateSleepDuration(formData.sleepTime, formData.wakeTime, formData.sleepDate, formData.sleepMeridiem, formData.wakeMeridiem)?.minutes}m
                 </p>
               </div>
             )}

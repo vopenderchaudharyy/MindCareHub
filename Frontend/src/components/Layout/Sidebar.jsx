@@ -1,8 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Heart, Moon, Activity, MessageSquare, Settings, User } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
   const location = useLocation();
+  const { currentUser } = useAuth();
   
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: Home },
@@ -53,12 +55,12 @@ const Sidebar = () => {
           <div className="flex-shrink-0 group block">
             <div className="flex items-center">
               <div>
-                <div className="inline-block h-9 w-9 rounded-full bg-indigo-100 items-center justify-center">
+                <div className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100">
                   <User className="h-5 w-5 text-indigo-500" />
                 </div>
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-700">User Name</p>
+                <p className="text-sm font-medium text-gray-700">{currentUser?.name || 'User Name'}</p>
                 <Link
                   to="/profile"
                   className="text-xs font-medium text-indigo-600 group-hover:text-indigo-500"

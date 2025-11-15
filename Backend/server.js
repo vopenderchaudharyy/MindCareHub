@@ -5,10 +5,24 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const path = require('path');
+const fs = require('fs');
 const { errorHandler } = require('./middleware/errorHandler');
 
-// Load env vars
-dotenv.config({ path: './config/config.env' });
+// Load env vars (try Backend/config/config.env, then project-root/.env, then CWD .env)
+(() => {
+  const candidates = [
+    path.join(__dirname, 'config', 'config.env'),
+    path.join(__dirname, '..', '.env'),
+    path.join(process.cwd(), '.env')
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) {
+      dotenv.config({ path: p });
+      break;
+    }
+  }
+})();
 
 // Connect to database
 mongoose

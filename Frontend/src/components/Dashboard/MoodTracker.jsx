@@ -18,13 +18,26 @@ const MoodTracker = () => {
   const [loading, setLoading] = useState(false);
 
   const moodOptions = [
-    { value: 'very_happy', label: '😄 Very Happy', color: 'bg-green-500' },
     { value: 'happy', label: '😊 Happy', color: 'bg-green-400' },
     { value: 'neutral', label: '😐 Neutral', color: 'bg-yellow-400' },
     { value: 'sad', label: '😔 Sad', color: 'bg-orange-400' },
-    { value: 'very_sad', label: '😢 Very Sad', color: 'bg-red-400' },
     { value: 'anxious', label: '😰 Anxious', color: 'bg-purple-400' },
-    { value: 'angry', label: '😠 Angry', color: 'bg-red-600' }
+    { value: 'angry', label: '😠 Angry', color: 'bg-red-600' },
+    { value: 'stressed', label: '😵‍💫 Stressed', color: 'bg-pink-500' },
+    { value: 'calm', label: '🧘 Calm', color: 'bg-blue-400' },
+    { value: 'tired', label: '🥱 Tired', color: 'bg-slate-400' },
+    { value: 'energetic', label: '⚡ Energetic', color: 'bg-emerald-500' },
+    { value: 'excited', label: '🤩 Excited', color: 'bg-indigo-500' },
+    { value: 'grateful', label: '🙏 Grateful', color: 'bg-amber-500' },
+    { value: 'overwhelmed', label: '🌊 Overwhelmed', color: 'bg-fuchsia-500' },
+    { value: 'frustrated', label: '😤 Frustrated', color: 'bg-rose-500' },
+    { value: 'content', label: '🙂 Content', color: 'bg-green-500' },
+    { value: 'proud', label: '🏅 Proud', color: 'bg-orange-500' },
+    { value: 'hopeful', label: '🌟 Hopeful', color: 'bg-cyan-500' },
+    { value: 'lonely', label: '😶‍🌫️ Lonely', color: 'bg-gray-500' },
+    { value: 'motivated', label: '🚀 Motivated', color: 'bg-lime-500' },
+    { value: 'bored', label: '🥱 Bored', color: 'bg-zinc-400' },
+    { value: 'other', label: '✨ Other', color: 'bg-stone-400' }
   ];
 
   useEffect(() => {
