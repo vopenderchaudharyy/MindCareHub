@@ -31,15 +31,15 @@ export const loginUser = (credentials) => API.post('auth/login', credentials);
 export const getProfile = () => API.get('auth/profile');
 
 // Mood API
-export const getMoodEntries = () => API.get('mood');
+export const getMoodEntries = (params) => API.get('mood', { params });
 export const addMoodEntry = (entry) => API.post('mood', entry);
 
 // Stress API
-export const getStressEntries = () => API.get('stress');
+export const getStressEntries = (params) => API.get('stress', { params });
 export const addStressEntry = (entry) => API.post('stress', entry);
 
 // Sleep API
-export const getSleepEntries = () => API.get('sleep');
+export const getSleepEntries = (params) => API.get('sleep', { params });
 export const addSleepEntry = (entry) => API.post('sleep', entry);
 
 // Affirmations API

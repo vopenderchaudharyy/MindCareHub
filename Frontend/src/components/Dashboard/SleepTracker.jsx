@@ -21,10 +21,11 @@ const SleepTracker = () => {
 
   const fetchEntries = async () => {
     try {
-      const { data } = await getSleepEntries({ limit: 7 });
-      setEntries(data);
+      const res = await getSleepEntries({ limit: 7 });
+      setEntries(Array.isArray(res.data?.data) ? res.data.data : []);
     } catch (error) {
       console.error('Error fetching sleep entries:', error);
+      setEntries([]);
     }
   };
 

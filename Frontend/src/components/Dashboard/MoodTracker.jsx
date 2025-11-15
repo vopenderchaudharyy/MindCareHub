@@ -31,10 +31,11 @@ const MoodTracker = () => {
 
   const fetchEntries = async () => {
     try {
-      const { data } = await getMoodEntries({ limit: 10 });
-      setEntries(data);
+      const res = await getMoodEntries({ limit: 10 });
+      setEntries(Array.isArray(res.data?.data) ? res.data.data : []);
     } catch (error) {
       console.error('Error fetching mood entries:', error);
+      setEntries([]);
     }
   };
 
@@ -166,7 +167,7 @@ const MoodTracker = () => {
                   <div>
                     <p className="font-medium text-gray-900">Score: {entry.moodScore}/10</p>
                     <p className="text-sm text-gray-500">
-                      {format(new Date(entry.date), 'PPp')}
+                      {format(new Date(entry.createdAt || entry.date), 'PPp')}
                     </p>
                     {entry.note && (
                       <p className="text-sm text-gray-600 mt-1">{entry.note}</p>

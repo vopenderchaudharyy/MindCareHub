@@ -24,10 +24,11 @@ const StressTracker = () => {
 
   const fetchEntries = async () => {
     try {
-      const { data } = await getStressEntries({ limit: 10 });
-      setEntries(data);
+      const res = await getStressEntries({ limit: 10 });
+      setEntries(Array.isArray(res.data?.data) ? res.data.data : []);
     } catch (error) {
       console.error('Error fetching stress entries:', error);
+      setEntries([]);
     }
   };
 
@@ -205,7 +206,7 @@ const StressTracker = () => {
                     <div>
                       <p className="font-medium text-gray-900">Stress Level: {entry.stressLevel}/10</p>
                       <p className="text-sm text-gray-500">
-                        {format(new Date(entry.date), 'PPp')}
+                        {format(new Date(entry.createdAt || entry.date), 'PPp')}
                       </p>
                     </div>
                   </div>
