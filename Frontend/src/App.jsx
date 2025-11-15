@@ -10,6 +10,11 @@ import About from "./pages/About";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
+import MoodTracker from "./components/Dashboard/MoodTracker";
+import SleepTracker from "./components/Dashboard/SleepTracker";
+import StressTracker from "./components/Dashboard/StressTracker";
+import DailyAffirmation from "./components/Affirmations/DailyAffirmation";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -27,6 +32,46 @@ function App() {
               <Route path="/register" element={<Register />} />
 
               {/* Protected Routes */}
+              <Route
+                path="/mood"
+                element={
+                  <PrivateRoute>
+                    <MoodTracker />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/sleep"
+                element={
+                  <PrivateRoute>
+                    <SleepTracker />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/stress"
+                element={
+                  <PrivateRoute>
+                    <StressTracker />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/affirmations"
+                element={
+                  <PrivateRoute>
+                    <DailyAffirmation />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <PrivateRoute>
+                    <Settings />
+                  </PrivateRoute>
+                }
+              />
               <Route
                 path="/dashboard"
                 element={

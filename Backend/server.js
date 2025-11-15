@@ -4,14 +4,27 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const connectDB = require('./config/db');
+const mongoose = require('mongoose');
 const { errorHandler } = require('./middleware/errorHandler');
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
 
 // Connect to database
-connectDB();
+mongoose
+  .connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+    family: 4,
+  })
+  .then((conn) => {
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    console.log(`📊 Database: ${conn.connection.name}`);
+  })
+  .catch((error) => {
+    console.error('❌ MongoDB connection error:', error.message);
+    process.exit(1);
+  });
 
 const app = express();
 

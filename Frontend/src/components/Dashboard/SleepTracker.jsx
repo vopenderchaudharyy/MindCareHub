@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { createSleepEntry, getSleepEntries } from '../../services/api';
+import { addSleepEntry, getSleepEntries } from '../../services/api';
 import { Moon, Plus, Clock, Sunrise, Sunset } from 'lucide-react';
 import { format, parseISO, differenceInHours, differenceInMinutes } from 'date-fns';
 
@@ -33,7 +33,7 @@ const SleepTracker = () => {
     setLoading(true);
 
     try {
-      await createSleepEntry(formData);
+      await addSleepEntry(formData);
       setShowForm(false);
       setFormData({
         sleepTime: '',

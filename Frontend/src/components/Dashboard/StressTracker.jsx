@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { createStressEntry, getStressEntries } from '../../services/api';
+import { addStressEntry, getStressEntries } from '../../services/api';
 import { AlertTriangle, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -36,7 +36,7 @@ const StressTracker = () => {
     setLoading(true);
 
     try {
-      await createStressEntry(formData);
+      await addStressEntry(formData);
       setShowForm(false);
       setFormData({
         stressLevel: 5,

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { createMoodEntry, getMoodEntries } from '../../services/api';
+import { addMoodEntry, getMoodEntries } from '../../services/api';
 import { Smile, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -43,7 +43,7 @@ const MoodTracker = () => {
     setLoading(true);
 
     try {
-      await createMoodEntry(formData);
+      await addMoodEntry(formData);
       setShowForm(false);
       setFormData({
         mood: '',
