@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { addSleepEntry, getSleepEntries } from '../../services/api';
 import { Moon, Plus, Clock, Sunrise, Sunset } from 'lucide-react';
 import { format, parseISO, differenceInHours, differenceInMinutes } from 'date-fns';
 
 const SleepTracker = () => {
+  const location = useLocation();
   const [entries, setEntries] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -18,6 +20,12 @@ const SleepTracker = () => {
   useEffect(() => {
     fetchEntries();
   }, []);
+
+  useEffect(() => {
+    if (location.state?.openForm) {
+      setShowForm(true);
+    }
+  }, [location.state]);
 
   const fetchEntries = async () => {
     try {

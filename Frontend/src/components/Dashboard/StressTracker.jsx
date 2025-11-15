@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { addStressEntry, getStressEntries } from '../../services/api';
 import { AlertTriangle, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 const StressTracker = () => {
+  const location = useLocation();
   const [entries, setEntries] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,6 +23,12 @@ const StressTracker = () => {
   useEffect(() => {
     fetchEntries();
   }, []);
+
+  useEffect(() => {
+    if (location.state?.openForm) {
+      setShowForm(true);
+    }
+  }, [location.state]);
 
   const fetchEntries = async () => {
     try {

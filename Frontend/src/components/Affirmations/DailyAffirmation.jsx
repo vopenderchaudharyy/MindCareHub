@@ -13,8 +13,8 @@ const DailyAffirmation = () => {
   const fetchAffirmation = async () => {
     try {
       setLoading(true);
-      const { data } = await getDailyAffirmation();
-      setAffirmation(data);
+      const res = await getDailyAffirmation();
+      setAffirmation(res.data?.data || null);
     } catch (error) {
       console.error('Error fetching affirmation:', error);
     } finally {

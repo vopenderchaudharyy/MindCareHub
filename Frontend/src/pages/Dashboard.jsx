@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
+import { getMoodEntries, getSleepEntries, getStressEntries } from '../services/api';
 import { 
   LayoutDashboard, 
   Brain, 
@@ -48,6 +49,46 @@ const Dashboard = () => {
     { name: 'Sleep Quality', value: '6.8/10', change: '+0.3', changeType: 'positive' },
   ];
 
+  const routeMap = {
+    overview: '/dashboard',
+    mood: '/mood',
+    stress: '/stress',
+    sleep: '/sleep',
+    analytics: '/analytics'
+  };
+
+  const handleExportData = async () => {
+    try {
+      const [moodRes, sleepRes, stressRes] = await Promise.all([
+        getMoodEntries({ limit: 1000 }),
+        getSleepEntries({ limit: 1000 }),
+        getStressEntries({ limit: 1000 })
+      ]);
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        mood: moodRes.data?.data || [],
+        sleep: sleepRes.data?.data || [],
+        stress: stressRes.data?.data || []
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `mindcare_export_${new Date().toISOString().slice(0,10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Export failed:', err);
+      alert('Failed to export data. Please try again.');
+    }
+  };
+
+  const handleAddEntry = () => {
+    navigate('/mood', { state: { openForm: true } });
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -63,12 +104,14 @@ const Dashboard = () => {
         <div className="mt-4 flex md:ml-4 md:mt-0">
           <button
             type="button"
+            onClick={handleExportData}
             className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
           >
             Export Data
           </button>
           <button
             type="button"
+            onClick={handleAddEntry}
             className="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Add Entry
@@ -102,7 +145,7 @@ const Dashboard = () => {
                 key={item.name}
                 onClick={() => {
                   setActiveTab(item.path);
-                  navigate(`/dashboard/${item.path}`);
+                  navigate(routeMap[item.path] || '/dashboard');
                 }}
                 className={`${
                   activeTab === item.path
@@ -141,13 +184,13 @@ const Dashboard = () => {
                 <div className="rounded-lg border border-gray-200 p-4">
                   <h4 className="font-medium text-gray-900">Quick Actions</h4>
                   <div className="mt-2 space-y-2">
-                    <button className="block w-full text-left text-sm text-indigo-600 hover:text-indigo-800">
+                    <button onClick={() => navigate('/mood', { state: { openForm: true } })} className="block w-full text-left text-sm text-indigo-600 hover:text-indigo-800">
                       Add today's mood
                     </button>
-                    <button className="block w-full text-left text-sm text-indigo-600 hover:text-indigo-800">
+                    <button onClick={() => navigate('/stress', { state: { openForm: true } })} className="block w-full text-left text-sm text-indigo-600 hover:text-indigo-800">
                       Log stress level
                     </button>
-                    <button className="block w-full text-left text-sm text-indigo-600 hover:text-indigo-800">
+                    <button onClick={() => navigate('/sleep', { state: { openForm: true } })} className="block w-full text-left text-sm text-indigo-600 hover:text-indigo-800">
                       Record sleep
                     </button>
                   </div>

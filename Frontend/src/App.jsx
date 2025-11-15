@@ -15,6 +15,7 @@ import SleepTracker from "./components/Dashboard/SleepTracker";
 import StressTracker from "./components/Dashboard/StressTracker";
 import DailyAffirmation from "./components/Affirmations/DailyAffirmation";
 import Settings from "./pages/Settings";
+import Analytics from "./pages/Analytics.jsx";
 
 function App() {
   return (
@@ -61,6 +62,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <DailyAffirmation />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/analytics"
+                element={
+                  <PrivateRoute>
+                    <Analytics />
                   </PrivateRoute>
                 }
               />

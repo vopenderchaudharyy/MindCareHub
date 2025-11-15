@@ -57,7 +57,7 @@ const connectDB = async () => {
         .replace(/(mongodb(?:\+srv)?:\/\/[^:]+:)([^@]+)@/, '$1********@');
       console.error('Connection URI:', maskedUri);
     } else {
-      console.error('mongodb+srv://vopenderchaudhary:vpchaudhary007@cluster0.nppmprn.mongodb.net/MindCareHUb');
+      console.error('MongoConnectionError: No MONGO_URI found in environment variables');
     }
     
     // Exit with failure

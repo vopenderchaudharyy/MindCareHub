@@ -44,6 +44,11 @@ export const addSleepEntry = (entry) => API.post('sleep', entry);
 
 // Affirmations API
 export const getAffirmations = () => API.get('affirmations');
-export const getDailyAffirmation = () => API.get('affirmations/daily');
+export const getDailyAffirmation = () => API.get('affirmations/random');
+
+// Analytics / Stats
+export const getMoodStats = (params) => API.get('mood/stats', { params });
+export const getSleepStats = (params) => API.get('sleep/stats', { params });
+export const getStressStats = (params) => API.get('stress/stats', { params });
 
 export default API;
