@@ -10,10 +10,14 @@ const testConnection = async () => {
   try {
     console.log('Attempting to connect to MongoDB...');
     console.log(`Using connection string: ${process.env.MONGO_URI?.split('@')[1] || 'connection string not found'}`);
+    if (!process.env.MONGO_URI || !process.env.MONGO_URI.trim()) {
+      throw new Error('MONGO_URI is not defined');
+    }
     
     const conn = await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      family: 4,
     });
     
     console.log(`✅ Successfully connected to MongoDB: ${conn.connection.host}`);

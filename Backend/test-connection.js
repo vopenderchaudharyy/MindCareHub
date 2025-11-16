@@ -1,5 +1,6 @@
 // Load environment variables
-require('dotenv').config({ path: './config/config.env' });
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, 'config', 'config.env') });
 
 // Import mongoose
 const mongoose = require('mongoose');
@@ -10,12 +11,16 @@ async function testConnection() {
   
   // Connection options
   const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+    family: 4,
   };
 
   try {
+    if (!process.env.MONGO_URI || !process.env.MONGO_URI.trim()) {
+      throw new Error('MONGO_URI is not defined');
+    }
+
     // Attempt to connect
     console.log('🔄 Connecting to MongoDB...');
     const conn = await mongoose.connect(process.env.MONGO_URI, options);

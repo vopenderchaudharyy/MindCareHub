@@ -1,4 +1,5 @@
-require('dotenv').config({ path: './config/config.env' });
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, 'config', 'config.env') });
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
@@ -19,12 +20,15 @@ app.get('/test-db', async (req, res) => {
     
     // Connection options
     const options = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      family: 4,
     };
     
     // Attempt to connect
+    if (!process.env.MONGO_URI || !process.env.MONGO_URI.trim()) {
+      throw new Error('MONGO_URI is not defined');
+    }
     const conn = await mongoose.connect(process.env.MONGO_URI, options);
     
     // Get database info

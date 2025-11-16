@@ -4,10 +4,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const path = require('path');
 const fs = require('fs');
 const { errorHandler } = require('./middleware/errorHandler');
+const connectDB = require('./config/db');
 
 // Load env vars (try Backend/config/config.env, then project-root/.env, then CWD .env)
 (() => {
@@ -25,20 +25,7 @@ const { errorHandler } = require('./middleware/errorHandler');
 })();
 
 // Connect to database
-mongoose
-  .connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 5000,
-    socketTimeoutMS: 45000,
-    family: 4,
-  })
-  .then((conn) => {
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-    console.log(`📊 Database: ${conn.connection.name}`);
-  })
-  .catch((error) => {
-    console.error('❌ MongoDB connection error:', error.message);
-    process.exit(1);
-  });
+connectDB();
 
 const app = express();
 
