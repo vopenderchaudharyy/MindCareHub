@@ -84,7 +84,7 @@ const Navbar = () => {
             >
               Home
             </Link>
-            {user ? (
+            {currentUser ? (
               <>
                 <Link
                   to="/dashboard"

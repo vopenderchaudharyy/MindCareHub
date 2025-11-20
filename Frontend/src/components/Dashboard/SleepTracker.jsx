@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { addSleepEntry, getSleepEntries } from '../../services/api';
-import { Moon, Plus, Clock, Sunrise, Sunset } from 'lucide-react';
+import { Moon, Plus, Clock, Sunrise, Sunset, ArrowLeft } from 'lucide-react';
 import { format, parseISO, differenceInHours, differenceInMinutes } from 'date-fns';
 
 const SleepTracker = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const todayStr = new Date().toISOString().slice(0, 10);
   const [entries, setEntries] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -30,6 +31,13 @@ const SleepTracker = () => {
       setShowForm(true);
     }
   }, [location.state]);
+
+  useEffect(() => {
+    try {
+      const autoOpen = localStorage.getItem('mch_auto_open_forms') === 'true';
+      if (autoOpen) setShowForm(true);
+    } catch {}
+  }, []);
 
   const fetchEntries = async () => {
     try {
@@ -98,9 +106,23 @@ const SleepTracker = () => {
 
   const calculateSleepDuration = (sleepTime, wakeTime, dateStr, sleepMeridiem, wakeMeridiem) => {
     if (!sleepTime || !wakeTime) return null;
+
+    if ((typeof sleepTime === 'string' && sleepTime.includes('T')) || (typeof wakeTime === 'string' && wakeTime.includes('T'))){
+      try {
+        const s = parseISO(sleepTime);
+        const w = parseISO(wakeTime);
+        let wake = w;
+        if (wake <= s) {
+          wake = new Date(wake.getTime() + 24 * 60 * 60 * 1000);
+        }
+        const totalMin = Math.max(0, differenceInMinutes(wake, s));
+        return { hours: Math.floor(totalMin / 60), minutes: totalMin % 60 };
+      } catch (e) {}
+    }
+
     const base = dateStr || todayStr;
-    const [sh, sm] = sleepTime.split(':').map(Number);
-    const [wh, wm] = wakeTime.split(':').map(Number);
+    const [sh, sm] = String(sleepTime).split(':').map(Number);
+    const [wh, wm] = String(wakeTime).split(':').map(Number);
     const sh24 = sleepMeridiem === 'AM' ? (sh === 12 ? 0 : sh) : (sh === 12 ? 12 : sh + 12);
     const wh24 = wakeMeridiem === 'AM' ? (wh === 12 ? 0 : wh) : (wh === 12 ? 12 : wh + 12);
     const sleep = new Date(`${base}T00:00:00`);
@@ -110,9 +132,8 @@ const SleepTracker = () => {
     if (wake < sleep) {
       wake.setDate(wake.getDate() + 1);
     }
-    const hours = differenceInHours(wake, sleep);
-    const minutes = differenceInMinutes(wake, sleep) % 60;
-    return { hours, minutes };
+    const totalMin = Math.max(0, differenceInMinutes(wake, sleep));
+    return { hours: Math.floor(totalMin / 60), minutes: totalMin % 60 };
   };
 
   const getQualityColor = (quality) => {
@@ -134,13 +155,23 @@ const SleepTracker = () => {
 
   const formatTime = (dateString) => {
     if (!dateString) return '';
-    return format(parseISO(dateString), 'h:mm a');
+    const tf = (typeof window !== 'undefined' && localStorage.getItem('mch_time_format')) || '12';
+    return tf === '24' ? format(parseISO(dateString), 'HH:mm') : format(parseISO(dateString), 'h:mm a');
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Sleep Tracker</h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            aria-label="Go back"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <h2 className="text-2xl font-bold text-gray-900">Sleep Tracker</h2>
+        </div>
         <button
           onClick={() => setShowForm(!showForm)}
           className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"

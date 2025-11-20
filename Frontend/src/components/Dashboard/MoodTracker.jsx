@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { addMoodEntry, getMoodEntries } from '../../services/api';
-import { Smile, Plus } from 'lucide-react';
+import { Smile, Plus, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 
 const MoodTracker = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [entries, setEntries] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -50,6 +51,13 @@ const MoodTracker = () => {
     }
   }, [location.state]);
 
+  useEffect(() => {
+    try {
+      const autoOpen = localStorage.getItem('mch_auto_open_forms') === 'true';
+      if (autoOpen) setShowForm(true);
+    } catch {}
+  }, []);
+
   const fetchEntries = async () => {
     try {
       const res = await getMoodEntries({ limit: 10 });
@@ -87,10 +95,25 @@ const MoodTracker = () => {
     return option ? option.label : mood;
   };
 
+  const formatDateTime = (dateStr) => {
+    const d = new Date(dateStr);
+    const tf = (typeof window !== 'undefined' && localStorage.getItem('mch_time_format')) || '12';
+    return tf === '24' ? `${format(d, 'PP')} ${format(d, 'HH:mm')}` : format(d, 'PP p');
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Mood Tracker</h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            aria-label="Go back"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <h2 className="text-2xl font-bold text-gray-900">Mood Tracker</h2>
+        </div>
         <button
           onClick={() => setShowForm(!showForm)}
           className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
@@ -187,9 +210,7 @@ const MoodTracker = () => {
                   <div className="text-3xl">{getMoodEmoji(entry.mood)}</div>
                   <div>
                     <p className="font-medium text-gray-900">Score: {entry.moodScore}/10</p>
-                    <p className="text-sm text-gray-500">
-                      {format(new Date(entry.createdAt || entry.date), 'PPp')}
-                    </p>
+                    <p className="text-sm text-gray-500">{formatDateTime(entry.createdAt || entry.date)}</p>
                     {entry.note && (
                       <p className="text-sm text-gray-600 mt-1">{entry.note}</p>
                     )}

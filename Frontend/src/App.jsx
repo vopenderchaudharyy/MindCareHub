@@ -1,5 +1,5 @@
 import { Toaster } from "react-hot-toast";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 import PrivateRoute from "./components/common/PrivateRoute";
@@ -18,12 +18,15 @@ import Settings from "./pages/Settings";
 import Analytics from "./pages/Analytics.jsx";
 
 function App() {
+  const location = useLocation();
+  const showSidebar = location.pathname.startsWith("/dashboard");
+
   return (
     <AuthProvider>
       <div className="min-h-screen bg-gray-50">
         <Navbar />
         <div className="flex">
-          <Sidebar />
+          {showSidebar && <Sidebar />}
           <main className="flex-1 p-6">
             <Routes>
               {/* Public Routes */}

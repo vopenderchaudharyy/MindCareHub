@@ -20,7 +20,7 @@ const Sidebar = () => {
       <div className="flex flex-col w-64 border-r border-gray-200 bg-white h-screen">
         <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
           <div className="flex items-center flex-shrink-0 px-4">
-            <h1 className="text-xl font-bold text-indigo-600">MindCare Hub</h1>
+            <span className="sr-only">Sidebar</span>
           </div>
           <div className="mt-5 flex-1 flex flex-col">
             <nav className="flex-1 px-2 space-y-1">
@@ -51,25 +51,16 @@ const Sidebar = () => {
             </nav>
           </div>
         </div>
-        <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-          <div className="flex-shrink-0 group block">
-            <div className="flex items-center">
-              <div>
-                <div className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100">
-                  <User className="h-5 w-5 text-indigo-500" />
-                </div>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-700">{currentUser?.name || 'User Name'}</p>
-                <Link
-                  to="/profile"
-                  className="text-xs font-medium text-indigo-600 group-hover:text-indigo-500"
-                >
-                  View profile
-                </Link>
-              </div>
+        <div className="flex-shrink-0 border-t border-gray-100 p-4">
+          <Link to="/profile" className="flex items-center gap-3 group">
+            <div className="h-9 w-9 rounded-full bg-indigo-100 flex items-center justify-center">
+              <User className="h-5 w-5 text-indigo-500" />
             </div>
-          </div>
+            <div className="min-w-0">
+              <div className="text-sm font-medium text-gray-900 truncate">{currentUser?.name || 'Profile'}</div>
+              <div className="text-xs text-indigo-600 group-hover:text-indigo-700">View profile</div>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
