@@ -28,10 +28,20 @@ const connectDB = require('./config/db');
 connectDB();
 
 const app = express();
+const allowedOrigins = new Set([
+  'http://localhost:5173',
+  ...(process.env.FRONTEND_URL || '').split(','),
+].map((value) => value.trim()).filter(Boolean));
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // Vite default port
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.has(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Origin ${origin} is not allowed by CORS`));
+  },
   credentials: true
 }));
 app.use(express.json());

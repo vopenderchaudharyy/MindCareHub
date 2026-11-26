@@ -51,7 +51,12 @@ export function AuthProvider({ children }) {
       setCurrentUser({ _id: data._id, name: data.name, email: data.email });
       return { success: true };
     } catch (err) {
-      const message = err.response?.data?.message || 'Registration failed. Please try again.';
+      const message = err.response?.data?.message
+        || (err.response?.status === 404
+          ? 'Registration service is not configured for this deployment.'
+          : !err.response
+            ? 'Could not reach the registration service. Please try again later.'
+            : 'Registration failed. Please try again.');
       setError(message);
       return { success: false, message };
     }
