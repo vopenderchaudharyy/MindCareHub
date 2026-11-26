@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { addSleepEntry, getSleepEntries } from '../../services/api';
 import { Moon, Plus, Clock, Sunrise, Sunset, ArrowLeft } from 'lucide-react';
-import { format, parseISO, differenceInHours, differenceInMinutes } from 'date-fns';
+import { format, parseISO, differenceInMinutes } from 'date-fns';
 
 const SleepTracker = () => {
   const location = useLocation();
@@ -36,7 +36,9 @@ const SleepTracker = () => {
     try {
       const autoOpen = localStorage.getItem('mch_auto_open_forms') === 'true';
       if (autoOpen) setShowForm(true);
-    } catch {}
+    } catch (error) {
+      console.error('Could not read form preferences:', error);
+    }
   }, []);
 
   const fetchEntries = async () => {
@@ -117,7 +119,10 @@ const SleepTracker = () => {
         }
         const totalMin = Math.max(0, differenceInMinutes(wake, s));
         return { hours: Math.floor(totalMin / 60), minutes: totalMin % 60 };
-      } catch (e) {}
+      } catch (error) {
+        console.error('Could not calculate sleep duration:', error);
+        return null;
+      }
     }
 
     const base = dateStr || todayStr;
@@ -151,12 +156,6 @@ const SleepTracker = () => {
       5: 'Excellent'
     };
     return labels[quality] || '';
-  };
-
-  const formatTime = (dateString) => {
-    if (!dateString) return '';
-    const tf = (typeof window !== 'undefined' && localStorage.getItem('mch_time_format')) || '12';
-    return tf === '24' ? format(parseISO(dateString), 'HH:mm') : format(parseISO(dateString), 'h:mm a');
   };
 
   return (

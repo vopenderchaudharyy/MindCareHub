@@ -62,7 +62,9 @@ const Dashboard = () => {
       const pref = localStorage.getItem('mch_dashboard_default') || 'overview';
       setActiveTab(pref);
       if (pref === 'analytics') setActiveAnalytics('all');
-    } catch {}
+    } catch (error) {
+      console.error('Could not load dashboard preferences:', error);
+    }
   }, []);
 
   useEffect(() => {
@@ -143,14 +145,6 @@ const Dashboard = () => {
     { name: 'Stress Level', value: `${stressLabel} (${statsData.stressAvg.toFixed(1)}/10)`, change: '', changeType: 'positive' },
     { name: 'Sleep Quality', value: `${statsData.sleepQualityAvg.toFixed(1)}/5`, change: '', changeType: 'positive' },
   ];
-
-  const routeMap = {
-    overview: '/dashboard',
-    mood: '/mood',
-    stress: '/stress',
-    sleep: '/sleep',
-    analytics: '/analytics'
-  };
 
   const handleAddEntry = () => {
     navigate('/mood', { state: { openForm: true } });
@@ -256,7 +250,7 @@ const Dashboard = () => {
                   <h4 className="font-medium text-gray-900">Quick Actions</h4>
                   <div className="mt-2 space-y-2">
                     <button onClick={() => navigate('/mood', { state: { openForm: true } })} className="block w-full text-left text-sm text-indigo-600 hover:text-indigo-800">
-                      Add today's mood
+                      Add today&apos;s mood
                     </button>
                     <button onClick={() => navigate('/stress', { state: { openForm: true } })} className="block w-full text-left text-sm text-indigo-600 hover:text-indigo-800">
                       Log stress level

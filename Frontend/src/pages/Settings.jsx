@@ -27,7 +27,9 @@ const Settings = () => {
       setAutoOpenForms(autoOpen);
       const tf = localStorage.getItem('mch_time_format') || '12';
       setTimeFormat(tf);
-    } catch {}
+    } catch (error) {
+      console.error('Could not load saved settings:', error);
+    }
   }, []);
 
   useEffect(() => {
@@ -69,7 +71,9 @@ const Settings = () => {
       setDefaultDash('overview');
       setAutoOpenForms(false);
       setTimeFormat('12');
-    } catch {}
+    } catch (error) {
+      console.error('Could not reset saved settings:', error);
+    }
   };
 
   return (

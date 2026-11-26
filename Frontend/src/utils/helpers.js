@@ -182,7 +182,7 @@ export const parseQueryString = (queryString) => {
     // Try to parse JSON values
     try {
       result[key] = JSON.parse(value);
-    } catch (e) {
+    } catch {
       result[key] = value;
     }
   }
@@ -199,7 +199,7 @@ export const toQueryString = (obj) => {
   if (!obj) return '';
   
   return Object.entries(obj)
-    .filter(([_, value]) => value !== undefined && value !== null)
+    .filter(([, value]) => value !== undefined && value !== null)
     .map(([key, value]) => {
       // Stringify objects and arrays
       const strValue = typeof value === 'object' 

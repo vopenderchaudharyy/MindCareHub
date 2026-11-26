@@ -16,6 +16,10 @@ const API = axios.create({
 // Add a request interceptor to include the auth token in requests
 API.interceptors.request.use(
   (config) => {
+    if (import.meta.env.PROD && !import.meta.env.VITE_API_URL) {
+      return Promise.reject(new Error('API_NOT_CONFIGURED'));
+    }
+
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

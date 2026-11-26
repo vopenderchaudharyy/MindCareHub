@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { addStressEntry, getStressEntries } from '../../services/api';
-import { AlertTriangle, Plus, ArrowLeft } from 'lucide-react';
+import { Plus, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 
 const StressTracker = () => {
@@ -35,7 +35,9 @@ const StressTracker = () => {
     try {
       const autoOpen = localStorage.getItem('mch_auto_open_forms') === 'true';
       if (autoOpen) setShowForm(true);
-    } catch {}
+    } catch (error) {
+      console.error('Could not read form preferences:', error);
+    }
   }, []);
 
   const fetchEntries = async () => {

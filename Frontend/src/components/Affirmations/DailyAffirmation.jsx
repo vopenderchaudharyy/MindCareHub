@@ -28,7 +28,9 @@ const DailyAffirmation = () => {
       const raw = localStorage.getItem('affirmation_favorites') || '[]';
       const parsed = JSON.parse(raw);
       setFavorites(Array.isArray(parsed) ? parsed : []);
-    } catch {}
+    } catch (error) {
+      console.error('Could not load saved affirmations:', error);
+    }
   }, []);
 
   const isSaved = affirmation && favorites.some(f => f.text === affirmation.text);
@@ -44,7 +46,9 @@ const DailyAffirmation = () => {
     if (!affirmation) return;
     try {
       await navigator.clipboard.writeText(affirmation.text);
-    } catch {}
+    } catch (error) {
+      console.error('Could not copy affirmation:', error);
+    }
   };
 
   if (loading) {
@@ -78,7 +82,7 @@ const DailyAffirmation = () => {
         {affirmation && (
           <div>
             <p className="text-xl text-white font-medium text-center italic">
-              "{affirmation.text}"
+              &ldquo;{affirmation.text}&rdquo;
             </p>
             <div className="mt-4 flex items-center justify-center gap-3">
               <button
