@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run MindCareHub frontend",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"--prefix",
+				"Frontend",
+				"run",
+				"dev",
+				"--",
+				"--host",
+				"0.0.0.0"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}
