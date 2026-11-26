@@ -1,5 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Heart, Moon, Activity, MessageSquare, Settings, User } from 'lucide-react';
+import {
+  Home,
+  Heart,
+  Moon,
+  Activity,
+  MessageSquare,
+  Settings,
+  User,
+  BarChart3,
+} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
@@ -12,12 +21,13 @@ const Sidebar = () => {
     { name: 'Sleep Tracker', path: '/sleep', icon: Moon },
     { name: 'Stress Tracker', path: '/stress', icon: Activity },
     { name: 'Affirmations', path: '/affirmations', icon: MessageSquare },
+    { name: 'Analytics', path: '/analytics', icon: BarChart3 },
     { name: 'Settings', path: '/settings', icon: Settings },
   ];
 
   return (
     <div className="hidden md:flex md:flex-shrink-0">
-      <div className="flex flex-col w-64 border-r border-gray-200 bg-white h-screen">
+      <div className="flex flex-col w-64 border-r border-gray-200 bg-white h-[calc(100vh-4rem)]">
         <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
           <div className="flex items-center flex-shrink-0 px-4">
             <span className="sr-only">Sidebar</span>

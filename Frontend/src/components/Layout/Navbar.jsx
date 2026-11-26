@@ -66,6 +66,9 @@ const Navbar = () => {
           <div className="-mr-2 flex items-center md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
+              aria-expanded={isOpen}
+              aria-controls="mobile-navigation"
+              aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -76,30 +79,41 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden">
+        <div id="mobile-navigation" className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <Link
               to="/"
+              onClick={() => setIsOpen(false)}
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
             >
               Home
             </Link>
             {currentUser ? (
               <>
-                <Link
-                  to="/dashboard"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  to="/profile"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
-                >
-                  Profile
-                </Link>
+                {[
+                  ['Dashboard', '/dashboard'],
+                  ['Mood Tracker', '/mood'],
+                  ['Sleep Tracker', '/sleep'],
+                  ['Stress Tracker', '/stress'],
+                  ['Affirmations', '/affirmations'],
+                  ['Analytics', '/analytics'],
+                  ['Settings', '/settings'],
+                  ['Profile', '/profile'],
+                ].map(([label, path]) => (
+                  <Link
+                    key={path}
+                    to={path}
+                    onClick={() => setIsOpen(false)}
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                  >
+                    {label}
+                  </Link>
+                ))}
                 <button
-                  onClick={handleLogout}
+                  onClick={() => {
+                    setIsOpen(false);
+                    handleLogout();
+                  }}
                   className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 hover:text-red-800 hover:bg-gray-50"
                 >
                   Logout
@@ -109,12 +123,14 @@ const Navbar = () => {
               <>
                 <Link
                   to="/login"
+                  onClick={() => setIsOpen(false)}
                   className="block px-3 py-2 rounded-md text-base font-medium text-indigo-600 hover:bg-indigo-50"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
+                  onClick={() => setIsOpen(false)}
                   className="block px-3 py-2 rounded-md text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
                 >
                   Register

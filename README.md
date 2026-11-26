@@ -79,8 +79,8 @@ Git & GitHub
 The frontend and API must both be deployed for registration and login to work.
 
 1. Deploy the API on Render using the repository's `render.yaml` Blueprint.
-2. In Render, set `MONGO_URI` to a MongoDB Atlas connection string and `FRONTEND_URL` to the exact Vercel frontend origin (for example, `https://your-app.vercel.app`). Render generates `JWT_SECRET` for the service.
-3. Deploy the `Frontend` directory to Vercel. Set `VITE_API_URL` to the API's public URL followed by `/api` (for example, `https://your-api.onrender.com/api`), then redeploy.
-4. Ensure the Vercel project is connected to this repository and uses `Frontend` as its root directory. The API endpoint must be reachable at `/api/auth/register` on the configured API host.
+2. In Render, set `MONGO_URI` to a MongoDB Atlas connection string and `FRONTEND_URL` to the exact Vercel frontend origin (`https://mindcarehubweb.vercel.app`). Render generates `JWT_SECRET` for the service.
+3. In the Vercel project, use this repository's `Frontend` directory as the root directory, with `npm run build` and `dist` as the output directory. Set `VITE_API_URL` to the Render API's public URL followed by `/api` (for example, `https://mindcarehub-api.onrender.com/api`), then redeploy.
+4. Confirm the Vercel deployment serves the frontend and the API endpoint is reachable at `/api/auth/register` on the configured API host.
 
 Do not commit database credentials or other secrets to the repository.
